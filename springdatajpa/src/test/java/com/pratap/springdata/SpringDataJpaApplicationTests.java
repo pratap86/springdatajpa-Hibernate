@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +17,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.test.annotation.Rollback;
 
 import com.pratap.springdata.entities.EmployeeEntity;
 import com.pratap.springdata.entities.ProductEntity;
+import com.pratap.springdata.entities.StudentEntity;
 import com.pratap.springdata.repos.EmployeeRepository;
 import com.pratap.springdata.repos.ProductRepository;
+import com.pratap.springdata.repos.StudentRepository;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -34,6 +39,9 @@ class SpringDataJpaApplicationTests {
 	
 	@Autowired
 	private EmployeeRepository employeeRepository;
+	
+	@Autowired
+	private StudentRepository studentRepository;
 	
 	private ProductEntity product;
 	
@@ -145,6 +153,47 @@ class SpringDataJpaApplicationTests {
 	void testProductFindAllSorting() {
 		Iterable<ProductEntity> sortedResults = productRepository.findAll(Sort.by(Direction.DESC, "name", "price"));
 		sortedResults.forEach(product -> System.out.println(product.getName()));
+	}
+	
+	@Test
+	void testFindAllStudents() {
+		Pageable pageable = PageRequest.of(0, 2, Direction.DESC, "firstName");
+		List<StudentEntity> students = studentRepository.findAllStudents(pageable);
+		assertThat(students, hasSize(2));
+	}
+	
+	@Test
+	void testFindAllStudentsPartialData() {
+		List<Object[]> studentsPartialData = studentRepository.findAllStudentsPartialData();
+		for(Object[] objects : studentsPartialData ) {
+			System.out.println(objects[0]);
+			System.out.println(objects[1]);
+		}
+	}
+	
+	@Test
+	void testFindAllStudentsByFirstName() {
+		List<StudentEntity> students = studentRepository.findAllStudentsByFirstName("test1");
+		assertThat(students, hasSize(1));
+	}
+	@Test
+	void testFindStudentsForGivenScores() {
+		List<StudentEntity> students = studentRepository.findStudentsForGivenScores(201, 204);
+		assertThat(students, hasSize(2));
+	}
+	
+	@Test
+	@Transactional
+//	@Rollback(false)
+	void testDeleteStudentsByFirstName() {
+		studentRepository.deleteStudentsByFirstName("test1");
+		assertThat(studentRepository.findAll(), hasSize(3));
+	}
+
+	@Test
+	void testFindAllStudentsByFirstNameNQ() {
+		List<StudentEntity> students = studentRepository.findByStudentFirstNameNQ("test1");
+		assertThat(students, hasSize(1));
 	}
 
 }
