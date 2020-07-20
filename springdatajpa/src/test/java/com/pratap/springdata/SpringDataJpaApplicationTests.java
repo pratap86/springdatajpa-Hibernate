@@ -53,13 +53,13 @@ class SpringDataJpaApplicationTests {
 	
 	@Test
 	void testReadProduct() {
-		ProductEntity productEntity = productRepository.findById(1).orElse(new ProductEntity());
-		assertThat(productEntity.getDescription(), equalTo(product.getDescription()));
+		ProductEntity productEntity = productRepository.findById(101).orElse(new ProductEntity());
+		assertThat(productEntity.getDescription(), equalTo("Awesome"));
 	}
 	
 	@Test
 	void testProductUpdate() {
-		ProductEntity productEntity = productRepository.findById(1).orElse(new ProductEntity());
+		ProductEntity productEntity = productRepository.findById(101).orElse(new ProductEntity());
 		productEntity.setDescription("Very awesome product");
 		ProductEntity updatedEntity = productRepository.save(productEntity);
 		assertThat(updatedEntity.getDescription(), equalTo("Very awesome product"));
@@ -67,9 +67,9 @@ class SpringDataJpaApplicationTests {
 	
 	@Test
 	void testDeleteProduct() {
-		if(productRepository.existsById(1)) {
-			productRepository.deleteById(1);
-			ProductEntity productEntity = productRepository.findById(1).orElse(null);
+		if(productRepository.existsById(101)) {
+			productRepository.deleteById(101);
+			ProductEntity productEntity = productRepository.findById(101).orElse(null);
 			assertThat(productEntity, nullValue());
 		} else {
 			assertEquals(1, " : ID not present..");
