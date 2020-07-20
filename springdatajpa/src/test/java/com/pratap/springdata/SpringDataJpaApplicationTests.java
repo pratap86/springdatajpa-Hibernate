@@ -1,10 +1,13 @@
 package com.pratap.springdata;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -17,19 +20,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.test.annotation.Rollback;
 
 import com.pratap.springdata.entities.EmployeeEntity;
 import com.pratap.springdata.entities.ProductEntity;
 import com.pratap.springdata.entities.StudentEntity;
+import com.pratap.springdata.payment.entities.CreditCard;
+import com.pratap.springdata.payment.repos.PaymentRepository;
 import com.pratap.springdata.repos.EmployeeRepository;
 import com.pratap.springdata.repos.ProductRepository;
 import com.pratap.springdata.repos.StudentRepository;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.hasSize;
 
 @SpringBootTest
 class SpringDataJpaApplicationTests {
@@ -42,6 +41,9 @@ class SpringDataJpaApplicationTests {
 	
 	@Autowired
 	private StudentRepository studentRepository;
+	
+	@Autowired
+	private PaymentRepository paymentRepository;
 	
 	private ProductEntity product;
 	
@@ -194,6 +196,16 @@ class SpringDataJpaApplicationTests {
 	void testFindAllStudentsByFirstNameNQ() {
 		List<StudentEntity> students = studentRepository.findByStudentFirstNameNQ("test1");
 		assertThat(students, hasSize(1));
+	}
+	
+	@Test
+	void testcreatePayment() {
+		CreditCard cc = new CreditCard();
+		cc.setId(123);
+		cc.setAmount(1200.0);
+		cc.setCardNumber("1234567890");
+		CreditCard savedCC = paymentRepository.save(cc);
+		assertThat(savedCC.getCardNumber(), equalTo("1234567890"));
 	}
 
 }
