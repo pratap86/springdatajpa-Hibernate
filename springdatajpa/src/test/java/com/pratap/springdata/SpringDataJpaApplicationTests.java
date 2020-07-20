@@ -24,6 +24,7 @@ import org.springframework.data.domain.Sort.Direction;
 import com.pratap.springdata.entities.EmployeeEntity;
 import com.pratap.springdata.entities.ProductEntity;
 import com.pratap.springdata.entities.StudentEntity;
+import com.pratap.springdata.payment.entities.Check;
 import com.pratap.springdata.payment.entities.CreditCard;
 import com.pratap.springdata.payment.repos.PaymentRepository;
 import com.pratap.springdata.repos.EmployeeRepository;
@@ -199,13 +200,23 @@ class SpringDataJpaApplicationTests {
 	}
 	
 	@Test
-	void testcreatePayment() {
+	void testcreatePaymentByCard() {
 		CreditCard cc = new CreditCard();
 		cc.setId(123);
 		cc.setAmount(1200.0);
 		cc.setCardNumber("1234567890");
 		CreditCard savedCC = paymentRepository.save(cc);
 		assertThat(savedCC.getCardNumber(), equalTo("1234567890"));
+	}
+	
+	@Test
+	void testcreatePaymentByCheck() {
+		Check check = new Check();
+		check.setId(124);
+		check.setAmount(1340);
+		check.setCheckNumber("12345");
+		Check savedCheck = paymentRepository.save(check);
+		assertThat(savedCheck.getCheckNumber(), equalTo("12345"));
 	}
 
 }

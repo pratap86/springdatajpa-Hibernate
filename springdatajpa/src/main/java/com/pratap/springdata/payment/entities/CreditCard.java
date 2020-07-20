@@ -1,10 +1,10 @@
 package com.pratap.springdata.payment.entities;
 
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
-@DiscriminatorValue("cc")
+@Table(name = "card")
 public class CreditCard extends Payment {
 
 	private String cardNumber;
