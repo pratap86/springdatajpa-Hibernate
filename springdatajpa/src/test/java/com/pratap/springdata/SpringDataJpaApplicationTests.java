@@ -21,6 +21,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
+import com.pratap.springdata.componentmapping.entities.Address;
+import com.pratap.springdata.componentmapping.entities.Employee;
+import com.pratap.springdata.componentmapping.repos.EmployeeCompRepository;
 import com.pratap.springdata.entities.EmployeeEntity;
 import com.pratap.springdata.entities.ProductEntity;
 import com.pratap.springdata.entities.StudentEntity;
@@ -45,6 +48,9 @@ class SpringDataJpaApplicationTests {
 	
 	@Autowired
 	private PaymentRepository paymentRepository;
+	
+	@Autowired
+	private EmployeeCompRepository employeeCompRepository;
 	
 	private ProductEntity product;
 	
@@ -217,6 +223,26 @@ class SpringDataJpaApplicationTests {
 		check.setCheckNumber("12345");
 		Check savedCheck = paymentRepository.save(check);
 		assertThat(savedCheck.getCheckNumber(), equalTo("12345"));
+	}
+	
+	@Test
+	void testCreateEmployeeAddress() {
+		Employee employee = new Employee();
+		employee.setId(123);
+		employee.setFirstName("test1");
+		employee.setLastName("last1");
+		
+		Address address = new Address();
+		address.setStreetaddress("New Test Road");
+		address.setCity("Bangalore");
+		address.setState("KA");
+		address.setZipcode("560054");
+		address.setCountry("IND");
+		
+		employee.setAddress(address);
+		
+		Employee savedEmp = employeeCompRepository.save(employee);
+		assertThat(savedEmp.getAddress().getCity(), equalTo("Bangalore"));
 	}
 
 }

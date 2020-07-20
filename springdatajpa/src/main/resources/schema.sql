@@ -34,3 +34,14 @@ id int,
 checknumber varchar(20),
 FOREIGN KEY (id) REFERENCES payment(id)
 );
+
+create table employeecom(
+id int,
+fname varchar(20),
+lname varchar(20),
+streetaddress varchar(30),
+city varchar(20),
+state varchar(20),
+zipcode varchar(20),
+country varchar(20)
+);
