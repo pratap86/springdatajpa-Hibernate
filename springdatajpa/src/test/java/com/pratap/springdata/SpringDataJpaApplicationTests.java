@@ -2,6 +2,9 @@ package com.pratap.springdata;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import com.pratap.springdata.repos.ProductRepository;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.hasSize;
 
 @SpringBootTest
 class SpringDataJpaApplicationTests {
@@ -81,6 +85,46 @@ class SpringDataJpaApplicationTests {
 	void testCreateEmployee() {
 		EmployeeEntity savedEmployee = employeeRepository.save(employee);
 		assertThat(savedEmployee.getFirstName(), equalTo(employee.getFirstName()));
+	}
+	
+	@Test
+	void testProductFindByName() {
+		List<ProductEntity> products = productRepository.findByName("product1");
+		assertThat(products, hasSize(2));
+	}
+	
+	@Test
+	void testProductFindByNameAndDescription() {
+		List<ProductEntity> products = productRepository.findByNameAndDescription("product4", "Awesome product");
+		assertThat(products.get(0).getPrice(), equalTo(2600.0));
+	}
+	
+	@Test
+	void testProductFindByPriceGreaterThan() {
+		List<ProductEntity> products = productRepository.findByPriceGreaterThan(2300.0);
+		assertThat(products, hasSize(3));
+	}
+	
+	@Test
+	void testProductFindByDescriptionContains() {
+		List<ProductEntity> products = productRepository.findByDescriptionContains("product");
+		assertThat(products, hasSize(3));
+	}
+
+	@Test
+	void testProductFindByPriceBetween() {
+		List<ProductEntity> products = productRepository.findByPriceBetween(2351.0, 2600.0);
+		assertThat(products, hasSize(2));
+	}
+	@Test
+	void testProductFindByDescriptionLike() {
+		List<ProductEntity> products = productRepository.findByDescriptionLike("Very%");
+		assertThat(products, hasSize(1));
+	}
+	@Test
+	void testProductFindByIdIn() {
+		List<ProductEntity> products = productRepository.findByIdIn(Arrays.asList(101, 103, 104));
+		assertThat(products, hasSize(3));
 	}
 
 }
