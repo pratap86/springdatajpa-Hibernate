@@ -1,6 +1,6 @@
 INSERT INTO PRODUCT(id, name, description, price) values 
 (101, 'product1', 'Awesome', 2300),
-(102, 'product2', 'Good Product', 2350),
+(102, 'product1', 'Good product', 2350),
 (103, 'product3', 'Very good product', 2400),
 (104, 'product4', 'Awesome product', 2600);
 
