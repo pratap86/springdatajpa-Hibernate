@@ -19,21 +19,18 @@ score int
 );
 
 create table payment(
-id int PRIMARY KEY,
-pmode varchar(2),
-amount decimal(8,3) ,
-cardnumber varchar(20),
-checknumber varchar(20)
+id int AUTO_INCREMENT PRIMARY KEY NOT NULL,
+amount decimal(8,3)
 );
 
 create table card(
-id int PRIMARY KEY,
-amount decimal(8,3),
-cardnumber varchar(20)
+id int,
+cardnumber varchar(20),
+FOREIGN KEY (id) REFERENCES payment(id)
 );
 
 create table bankcheck(
-id int PRIMARY KEY,
-amount decimal(8,3),
-checknumber varchar(20)
+id int,
+checknumber varchar(20),
+FOREIGN KEY (id) REFERENCES payment(id)
 );
