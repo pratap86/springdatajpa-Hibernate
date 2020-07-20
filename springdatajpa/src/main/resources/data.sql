@@ -9,3 +9,9 @@ INSERT INTO EMPLOYEE(id, first_name, last_name) values
 (12346, 'test12', 'last2'),
 (12347, 'test3', 'last3'),
 (12348, 'test4', 'last4');
+
+insert into student(id, fname, lname, score) values
+(101, 'test1', 'last1', 201),
+(102, 'test2', 'last2', 202),
+(103, 'test3', 'last3', 203),
+(104, 'test4', 'last4', 204);
