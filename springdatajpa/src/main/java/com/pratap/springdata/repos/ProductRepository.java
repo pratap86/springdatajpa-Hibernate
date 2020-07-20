@@ -2,11 +2,11 @@ package com.pratap.springdata.repos;
 
 import java.util.List;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import com.pratap.springdata.entities.ProductEntity;
 
-public interface ProductRepository extends CrudRepository<ProductEntity, Integer>{
+public interface ProductRepository extends PagingAndSortingRepository<ProductEntity, Integer>{
 	
 	List<ProductEntity> findByName(String name);
 	

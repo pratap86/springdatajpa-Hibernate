@@ -4,11 +4,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 
 import com.pratap.springdata.entities.EmployeeEntity;
 import com.pratap.springdata.entities.ProductEntity;
@@ -125,6 +131,20 @@ class SpringDataJpaApplicationTests {
 	void testProductFindByIdIn() {
 		List<ProductEntity> products = productRepository.findByIdIn(Arrays.asList(101, 103, 104));
 		assertThat(products, hasSize(3));
+	}
+	
+	@Test
+	void testProductFindAllPaging() {
+		
+		Pageable pageable = PageRequest.of(0, 2);
+		Page<ProductEntity> results = productRepository.findAll(pageable);
+		assertThat(results.getContent(), hasSize(2));
+	}
+	
+	@Test
+	void testProductFindAllSorting() {
+		Iterable<ProductEntity> sortedResults = productRepository.findAll(Sort.by(Direction.DESC, "name", "price"));
+		sortedResults.forEach(product -> System.out.println(product.getName()));
 	}
 
 }
