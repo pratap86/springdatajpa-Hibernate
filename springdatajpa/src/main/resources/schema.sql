@@ -97,3 +97,10 @@ person_id int,
 FOREIGN KEY (person_id)
 REFERENCES person(id)
 );
+
+CREATE TABLE doctor (
+    id int NOT NULL ,
+    email varchar(255) NOT NULL,
+    name varchar(255) NOT NULL,
+    PRIMARY KEY (id,email)
+);

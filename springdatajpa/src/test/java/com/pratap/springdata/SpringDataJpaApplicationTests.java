@@ -32,6 +32,9 @@ import com.pratap.springdata.associations.onetoone.repos.LicenseRepository;
 import com.pratap.springdata.componentmapping.entities.Address;
 import com.pratap.springdata.componentmapping.entities.Employee;
 import com.pratap.springdata.componentmapping.repos.EmployeeCompRepository;
+import com.pratap.springdata.compositeprimarykeys.entities.Doctor;
+import com.pratap.springdata.compositeprimarykeys.entities.DoctorId;
+import com.pratap.springdata.compositeprimarykeys.repos.DoctorRepository;
 import com.pratap.springdata.entities.EmployeeEntity;
 import com.pratap.springdata.entities.ProductEntity;
 import com.pratap.springdata.entities.StudentEntity;
@@ -65,6 +68,9 @@ class SpringDataJpaApplicationTests {
 	
 	@Autowired
 	private LicenseRepository licenseRepository;
+	
+	@Autowired
+	private DoctorRepository doctorRepository;
 	
 	private ProductEntity product;
 	
@@ -315,6 +321,23 @@ class SpringDataJpaApplicationTests {
 		
 		assertThat(savedLicense.getPerson().getFirstName(), equalTo("test1"));
 		
+	}
+	
+	@Test
+	void testSaveDoctor() {
+		
+		Doctor doctor = new Doctor();
+		doctor.setName("test");
+		
+		DoctorId id = new DoctorId();
+		id.setId(123);
+		id.setEmail("test@test.com");
+		
+		doctor.setId(id);
+		
+		Doctor savedDoctor = doctorRepository.save(doctor);
+		
+		assertThat(savedDoctor.getId().getEmail(), equalTo("test@test.com"));
 	}
 
 }
