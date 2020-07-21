@@ -11,8 +11,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
+import org.hibernate.Session;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +73,9 @@ class SpringDataJpaApplicationTests {
 	
 	@Autowired
 	private DoctorRepository doctorRepository;
+	
+	@Autowired
+	private EntityManager entityManager;
 	
 	private ProductEntity product;
 	
@@ -339,5 +344,20 @@ class SpringDataJpaApplicationTests {
 		
 		assertThat(savedDoctor.getId().getEmail(), equalTo("test@test.com"));
 	}
+	
+	@Test
+	void testProductFirstLevelCache() {
+		
+		Session session = entityManager.unwrap(Session.class);
+		
+		Optional<ProductEntity> optionalProduct = productRepository.findById(101);
+		
+		productRepository.findById(101);
+		
+		session.evict(optionalProduct);
+		
+		productRepository.findById(101);
+	}
+	
 
 }
