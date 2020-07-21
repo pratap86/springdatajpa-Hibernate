@@ -1,10 +1,15 @@
 package com.pratap.springdata;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -17,19 +22,25 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.test.annotation.Rollback;
 
+import com.pratap.springdata.associations.onetomany.entities.Customer;
+import com.pratap.springdata.associations.onetomany.entities.PhoneNumber;
+import com.pratap.springdata.associations.onetomany.repos.CustomerRepository;
+import com.pratap.springdata.associations.onetoone.entities.License;
+import com.pratap.springdata.associations.onetoone.entities.Person;
+import com.pratap.springdata.associations.onetoone.repos.LicenseRepository;
+import com.pratap.springdata.componentmapping.entities.Address;
+import com.pratap.springdata.componentmapping.entities.Employee;
+import com.pratap.springdata.componentmapping.repos.EmployeeCompRepository;
 import com.pratap.springdata.entities.EmployeeEntity;
 import com.pratap.springdata.entities.ProductEntity;
 import com.pratap.springdata.entities.StudentEntity;
+import com.pratap.springdata.payment.entities.Check;
+import com.pratap.springdata.payment.entities.CreditCard;
+import com.pratap.springdata.payment.repos.PaymentRepository;
 import com.pratap.springdata.repos.EmployeeRepository;
 import com.pratap.springdata.repos.ProductRepository;
 import com.pratap.springdata.repos.StudentRepository;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.hasSize;
 
 @SpringBootTest
 class SpringDataJpaApplicationTests {
@@ -42,6 +53,18 @@ class SpringDataJpaApplicationTests {
 	
 	@Autowired
 	private StudentRepository studentRepository;
+	
+	@Autowired
+	private PaymentRepository paymentRepository;
+	
+	@Autowired
+	private EmployeeCompRepository employeeCompRepository;
+	
+	@Autowired
+	private CustomerRepository customerRepository;
+	
+	@Autowired
+	private LicenseRepository licenseRepository;
 	
 	private ProductEntity product;
 	
@@ -194,6 +217,104 @@ class SpringDataJpaApplicationTests {
 	void testFindAllStudentsByFirstNameNQ() {
 		List<StudentEntity> students = studentRepository.findByStudentFirstNameNQ("test1");
 		assertThat(students, hasSize(1));
+	}
+	
+	@Test
+	void testcreatePaymentByCard() {
+		CreditCard cc = new CreditCard();
+		cc.setId(123);
+		cc.setAmount(1200.0);
+		cc.setCardNumber("1234567890");
+		CreditCard savedCC = paymentRepository.save(cc);
+		assertThat(savedCC.getCardNumber(), equalTo("1234567890"));
+	}
+	
+	@Test
+	void testcreatePaymentByCheck() {
+		Check check = new Check();
+		check.setId(124);
+		check.setAmount(1340);
+		check.setCheckNumber("12345");
+		Check savedCheck = paymentRepository.save(check);
+		assertThat(savedCheck.getCheckNumber(), equalTo("12345"));
+	}
+	
+	@Test
+	void testCreateEmployeeAddress() {
+		Employee employee = new Employee();
+		employee.setId(123);
+		employee.setFirstName("test1");
+		employee.setLastName("last1");
+		
+		Address address = new Address();
+		address.setStreetaddress("New Test Road");
+		address.setCity("Bangalore");
+		address.setState("KA");
+		address.setZipcode("560054");
+		address.setCountry("IND");
+		
+		employee.setAddress(address);
+		
+		Employee savedEmp = employeeCompRepository.save(employee);
+		assertThat(savedEmp.getAddress().getCity(), equalTo("Bangalore"));
+	}
+	
+	
+	@Test
+	void testCreateCustomer() {
+		
+		Customer customer1 = new Customer();
+		customer1.setFirstName("testx");
+		customer1.setLastName("lastx");
+		
+		
+		PhoneNumber ph1 = new PhoneNumber();
+		ph1.setNumber("9898989898");
+		ph1.setType("Corporate");
+
+		customer1.addPhoneNumber(ph1);
+		
+		PhoneNumber ph2 = new PhoneNumber();
+		ph2.setNumber("9898989899");
+		ph2.setType("Group User");
+		
+		customer1.addPhoneNumber(ph2);
+		
+		Customer savedCustomer = customerRepository.save(customer1);
+		assertThat(savedCustomer.getNumbers().stream().map(customer -> customer.getNumber()).findFirst().get(), equalTo("9898989898"));
+	}
+	
+//	@Test
+	@Transactional
+	void testLoadCustomerById() {
+		Optional<Customer> optionalCust = customerRepository.findById(101l);
+		if(optionalCust.isPresent()) {
+			optionalCust.get().getNumbers();
+			assertThat(optionalCust.get().getFirstName(), equalTo("test1"));
+		}
+		
+		assertThat(optionalCust, equalTo("is empty"));
+	}
+	
+	@Test
+	void testCreateLicence() {
+		License license = new License();
+		license.setType("Two wheeler");
+		license.setValidFrom(new Date());
+		license.setValidTo(new Date());
+		
+		Person person1 = new Person();
+		
+		person1.setFirstName("test1");
+		person1.setLastName("last1");
+		person1.setAge(32);
+		
+		license.setPerson(person1);
+		
+		License savedLicense = licenseRepository.save(license);
+		
+		assertThat(savedLicense.getPerson().getFirstName(), equalTo("test1"));
+		
 	}
 
 }
