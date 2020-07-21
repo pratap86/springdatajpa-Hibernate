@@ -22,6 +22,10 @@ insert into customer(id, fname, lname) values
 (103, 'test3', 'last3'),
 (104, 'test4', 'last4');
 
+insert into bankaccount values
+(1,'Narayan','Pratap',5000),
+(2,'Nishad','Sanjay',4000);
+
 --insert into phone_number(id, customer_id, number, type) values
 --(201, 101, '9898989898', 'corporate'),
 --(201, 101, '9898989897', 'group'),

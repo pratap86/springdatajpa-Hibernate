@@ -11,8 +11,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
+import org.hibernate.Session;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ import com.pratap.springdata.associations.onetoone.repos.LicenseRepository;
 import com.pratap.springdata.componentmapping.entities.Address;
 import com.pratap.springdata.componentmapping.entities.Employee;
 import com.pratap.springdata.componentmapping.repos.EmployeeCompRepository;
+import com.pratap.springdata.compositeprimarykeys.entities.Doctor;
+import com.pratap.springdata.compositeprimarykeys.entities.DoctorId;
+import com.pratap.springdata.compositeprimarykeys.repos.DoctorRepository;
 import com.pratap.springdata.entities.EmployeeEntity;
 import com.pratap.springdata.entities.ProductEntity;
 import com.pratap.springdata.entities.StudentEntity;
@@ -41,6 +46,7 @@ import com.pratap.springdata.payment.repos.PaymentRepository;
 import com.pratap.springdata.repos.EmployeeRepository;
 import com.pratap.springdata.repos.ProductRepository;
 import com.pratap.springdata.repos.StudentRepository;
+import com.pratap.springdata.transactionmanagement.services.BankAccountService;
 
 @SpringBootTest
 class SpringDataJpaApplicationTests {
@@ -65,6 +71,15 @@ class SpringDataJpaApplicationTests {
 	
 	@Autowired
 	private LicenseRepository licenseRepository;
+	
+	@Autowired
+	private DoctorRepository doctorRepository;
+	
+	@Autowired
+	private EntityManager entityManager;
+	
+	@Autowired
+	private BankAccountService bankAccountService;
 	
 	private ProductEntity product;
 	
@@ -315,6 +330,42 @@ class SpringDataJpaApplicationTests {
 		
 		assertThat(savedLicense.getPerson().getFirstName(), equalTo("test1"));
 		
+	}
+	
+	@Test
+	void testSaveDoctor() {
+		
+		Doctor doctor = new Doctor();
+		doctor.setName("test");
+		
+		DoctorId id = new DoctorId();
+		id.setId(123);
+		id.setEmail("test@test.com");
+		
+		doctor.setId(id);
+		
+		Doctor savedDoctor = doctorRepository.save(doctor);
+		
+		assertThat(savedDoctor.getId().getEmail(), equalTo("test@test.com"));
+	}
+	
+	@Test
+	void testProductFirstLevelCache() {
+		
+		Session session = entityManager.unwrap(Session.class);
+		
+		Optional<ProductEntity> optionalProduct = productRepository.findById(101);
+		
+		productRepository.findById(101);
+		
+		session.evict(optionalProduct);
+		
+		productRepository.findById(101);
+	}
+	
+	@Test
+	void testTransferMoney() {
+		bankAccountService.transferMoney(500.0);
 	}
 
 }
