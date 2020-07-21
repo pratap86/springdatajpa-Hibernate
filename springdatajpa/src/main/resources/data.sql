@@ -15,3 +15,15 @@ insert into student(id, fname, lname, score) values
 (102, 'test2', 'last2', 202),
 (103, 'test3', 'last3', 203),
 (104, 'test4', 'last4', 204);
+
+insert into customer(id, fname, lname) values
+(101, 'test1', 'last1'),
+(102, 'test2', 'last2'),
+(103, 'test3', 'last3'),
+(104, 'test4', 'last4');
+
+--insert into phone_number(id, customer_id, number, type) values
+--(201, 101, '9898989898', 'corporate'),
+--(201, 101, '9898989897', 'group'),
+--(201, 103, '9898989890', 'corporate'),
+--(201, 102, '9898989891', 'corporate');

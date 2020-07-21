@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -21,6 +22,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
+import com.pratap.springdata.associations.onetomany.entities.Customer;
+import com.pratap.springdata.associations.onetomany.entities.PhoneNumber;
+import com.pratap.springdata.associations.onetomany.repos.CustomerRepository;
 import com.pratap.springdata.componentmapping.entities.Address;
 import com.pratap.springdata.componentmapping.entities.Employee;
 import com.pratap.springdata.componentmapping.repos.EmployeeCompRepository;
@@ -51,6 +55,9 @@ class SpringDataJpaApplicationTests {
 	
 	@Autowired
 	private EmployeeCompRepository employeeCompRepository;
+	
+	@Autowired
+	private CustomerRepository customerRepository;
 	
 	private ProductEntity product;
 	
@@ -243,6 +250,43 @@ class SpringDataJpaApplicationTests {
 		
 		Employee savedEmp = employeeCompRepository.save(employee);
 		assertThat(savedEmp.getAddress().getCity(), equalTo("Bangalore"));
+	}
+	
+	
+	@Test
+	void testCreateCustomer() {
+		
+		Customer customer1 = new Customer();
+		customer1.setFirstName("testx");
+		customer1.setLastName("lastx");
+		
+		
+		PhoneNumber ph1 = new PhoneNumber();
+		ph1.setNumber("9898989898");
+		ph1.setType("Corporate");
+
+		customer1.addPhoneNumber(ph1);
+		
+		PhoneNumber ph2 = new PhoneNumber();
+		ph2.setNumber("9898989899");
+		ph2.setType("Group User");
+		
+		customer1.addPhoneNumber(ph2);
+		
+		Customer savedCustomer = customerRepository.save(customer1);
+		assertThat(savedCustomer.getNumbers().stream().map(customer -> customer.getNumber()).findFirst().get(), equalTo("9898989898"));
+	}
+	
+//	@Test
+	@Transactional
+	void testLoadCustomerById() {
+		Optional<Customer> optionalCust = customerRepository.findById(101l);
+		if(optionalCust.isPresent()) {
+			optionalCust.get().getNumbers();
+			assertThat(optionalCust.get().getFirstName(), equalTo("test1"));
+		}
+		
+		assertThat(optionalCust, equalTo("is empty"));
 	}
 
 }

@@ -45,3 +45,18 @@ state varchar(20),
 zipcode varchar(20),
 country varchar(20)
 );
+
+create table customer(
+id int PRIMARY KEY AUTO_INCREMENT,
+fname varchar(20),
+lname varchar(20)
+);
+
+create table phone_number(
+id int AUTO_INCREMENT PRIMARY KEY,
+customer_id int,
+number varchar(20),
+type varchar(20),
+ FOREIGN KEY (customer_id)
+REFERENCES customer(id)
+);
