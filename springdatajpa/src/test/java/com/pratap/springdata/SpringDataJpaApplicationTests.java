@@ -46,6 +46,7 @@ import com.pratap.springdata.payment.repos.PaymentRepository;
 import com.pratap.springdata.repos.EmployeeRepository;
 import com.pratap.springdata.repos.ProductRepository;
 import com.pratap.springdata.repos.StudentRepository;
+import com.pratap.springdata.transactionmanagement.services.BankAccountService;
 
 @SpringBootTest
 class SpringDataJpaApplicationTests {
@@ -76,6 +77,9 @@ class SpringDataJpaApplicationTests {
 	
 	@Autowired
 	private EntityManager entityManager;
+	
+	@Autowired
+	private BankAccountService bankAccountService;
 	
 	private ProductEntity product;
 	
@@ -359,5 +363,9 @@ class SpringDataJpaApplicationTests {
 		productRepository.findById(101);
 	}
 	
+	@Test
+	void testTransferMoney() {
+		bankAccountService.transferMoney(500.0);
+	}
 
 }
