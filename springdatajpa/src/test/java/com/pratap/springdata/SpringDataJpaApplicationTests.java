@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +26,9 @@ import org.springframework.data.domain.Sort.Direction;
 import com.pratap.springdata.associations.onetomany.entities.Customer;
 import com.pratap.springdata.associations.onetomany.entities.PhoneNumber;
 import com.pratap.springdata.associations.onetomany.repos.CustomerRepository;
+import com.pratap.springdata.associations.onetoone.entities.License;
+import com.pratap.springdata.associations.onetoone.entities.Person;
+import com.pratap.springdata.associations.onetoone.repos.LicenseRepository;
 import com.pratap.springdata.componentmapping.entities.Address;
 import com.pratap.springdata.componentmapping.entities.Employee;
 import com.pratap.springdata.componentmapping.repos.EmployeeCompRepository;
@@ -58,6 +62,9 @@ class SpringDataJpaApplicationTests {
 	
 	@Autowired
 	private CustomerRepository customerRepository;
+	
+	@Autowired
+	private LicenseRepository licenseRepository;
 	
 	private ProductEntity product;
 	
@@ -287,6 +294,27 @@ class SpringDataJpaApplicationTests {
 		}
 		
 		assertThat(optionalCust, equalTo("is empty"));
+	}
+	
+	@Test
+	void testCreateLicence() {
+		License license = new License();
+		license.setType("Two wheeler");
+		license.setValidFrom(new Date());
+		license.setValidTo(new Date());
+		
+		Person person1 = new Person();
+		
+		person1.setFirstName("test1");
+		person1.setLastName("last1");
+		person1.setAge(32);
+		
+		license.setPerson(person1);
+		
+		License savedLicense = licenseRepository.save(license);
+		
+		assertThat(savedLicense.getPerson().getFirstName(), equalTo("test1"));
+		
 	}
 
 }
