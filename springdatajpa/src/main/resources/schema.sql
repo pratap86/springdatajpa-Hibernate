@@ -104,3 +104,5 @@ CREATE TABLE doctor (
     name varchar(255) NOT NULL,
     PRIMARY KEY (id,email)
 );
+
+create table bankaccount (accno int,lastname varchar(25),firstname varchar(25),bal int)
