@@ -33,6 +33,7 @@ import com.pratap.springdata.componentmapping.entities.Address;
 import com.pratap.springdata.componentmapping.entities.Employee;
 import com.pratap.springdata.componentmapping.repos.EmployeeCompRepository;
 import com.pratap.springdata.compositeprimarykeys.entities.Doctor;
+import com.pratap.springdata.compositeprimarykeys.entities.DoctorId;
 import com.pratap.springdata.compositeprimarykeys.repos.DoctorRepository;
 import com.pratap.springdata.entities.EmployeeEntity;
 import com.pratap.springdata.entities.ProductEntity;
@@ -326,12 +327,17 @@ class SpringDataJpaApplicationTests {
 	void testSaveDoctor() {
 		
 		Doctor doctor = new Doctor();
-		doctor.setId(123);
 		doctor.setName("test");
-		doctor.setEmail("test@test.com");
+		
+		DoctorId id = new DoctorId();
+		id.setId(123);
+		id.setEmail("test@test.com");
+		
+		doctor.setId(id);
+		
 		Doctor savedDoctor = doctorRepository.save(doctor);
 		
-		assertThat(savedDoctor.getEmail(), equalTo("test@test.com"));
+		assertThat(savedDoctor.getId().getEmail(), equalTo("test@test.com"));
 	}
 
 }

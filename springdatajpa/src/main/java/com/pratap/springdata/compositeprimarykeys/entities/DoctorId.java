@@ -2,6 +2,8 @@ package com.pratap.springdata.compositeprimarykeys.entities;
 
 import java.io.Serializable;
 
+import javax.persistence.Embeddable;
+@Embeddable
 public class DoctorId implements Serializable {
 
 	private static final long serialVersionUID = -822334292665501776L;

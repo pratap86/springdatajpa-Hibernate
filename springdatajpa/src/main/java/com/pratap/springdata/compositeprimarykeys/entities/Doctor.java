@@ -1,36 +1,15 @@
 package com.pratap.springdata.compositeprimarykeys.entities;
 
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
 
 @Entity(name = "doctor")
-@IdClass(DoctorId.class)
 public class Doctor {
 
-	@Id
-	private long id;
-	
-	@Id
-	private String email;
+	@EmbeddedId
+	private DoctorId id;
 	
 	private String name;
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
 
 	public String getName() {
 		return name;
@@ -38,6 +17,14 @@ public class Doctor {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public DoctorId getId() {
+		return id;
+	}
+
+	public void setId(DoctorId id) {
+		this.id = id;
 	}
 	
 }
