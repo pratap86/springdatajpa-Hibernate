@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.pratap.clinicals.entities.ClinicalData;
 import com.pratap.clinicals.entities.Patient;
+import com.pratap.clinicals.exceptions.ClinicalServiceException;
 import com.pratap.clinicals.repos.ClinicalDataRepository;
 import com.pratap.clinicals.repos.PatientRepository;
 
@@ -32,7 +33,7 @@ public class PatientServiceImpl implements PatientService {
 
 	@Override
 	public Patient getPatient(long id) {
-		return patientRepository.findById(id).orElse(new Patient());
+		return patientRepository.findById(id).orElseThrow( () -> new ClinicalServiceException("Patient Id '"+id+"' does not exist") );
 	}
 
 	@Override
