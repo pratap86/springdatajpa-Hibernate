@@ -17,8 +17,11 @@ public class ClinicalDataController {
 	@Autowired
 	private ClinicalDataService clinicalDataService;
 	
+	
+	
 	@PostMapping("/clinicals")
 	public ClinicalData saveClinicalData( @RequestBody ClinicalDataRequest request ) {
+		
 		return clinicalDataService.saveClinicalData(request);
 	}
 

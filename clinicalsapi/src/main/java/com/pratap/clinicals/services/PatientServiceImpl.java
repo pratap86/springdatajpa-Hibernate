@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -43,16 +44,20 @@ public class PatientServiceImpl implements PatientService {
 
 	@Override
 	public Patient getPatient(long id) {
+		if(Objects.isNull(id)) {
+			throw new ClinicalServiceException("Pateint id is : "+id);
+		}
 		return patientRepository.findById(id).orElseThrow( () -> new ClinicalServiceException("Patient Id '"+id+"' does not exist") );
 	}
 
 	@Override
 	public Patient savePatient(Patient patient) {
 		
-		if(patient == null || patient.getClinicaldatas() == null) {
+		LOGGER.info("inside savePatient() {}", patient);
+		if(patient == null) {
 			throw new ClinicalServiceException("Patient request data is not valid : Patient - "+patient);
 		}
-		
+		LOGGER.info("Going to Perform savePatient() into db {}", patient);
 		return patientRepository.save(patient);
 	}
 
@@ -102,13 +107,12 @@ public class PatientServiceImpl implements PatientService {
 	@Override
 	public Patient updatePatientDetails(long id, Patient patient) {
 		LOGGER.info("inside PATCH updatePatientDetails( ), id : {} ", id);
-		Patient fetchedPatient = patientRepository.findById(id).orElseThrow(() -> new ClinicalServiceException(" No Patient details available for ID : "+id));
-		if(patient != null) {
-			patient.getClinicaldatas().forEach(clinicalData -> {
-				fetchedPatient.addClinicaldata(clinicalData);
-			});
-		}
-		return patientRepository.saveAndFlush(fetchedPatient);
+		LOGGER.info("and patient details {} ", patient);
+		Patient fetchedPatient = patientRepository.findById(id).orElseThrow( () -> new ClinicalServiceException("Patient Id '"+id+"' does not exist") );
+		fetchedPatient.setFirstName(patient.getFirstName());
+		fetchedPatient.setLastName(patient.getLastName());
+		fetchedPatient.setAge(patient.getAge());
+		return patientRepository.save(fetchedPatient);
 	}
 
 }

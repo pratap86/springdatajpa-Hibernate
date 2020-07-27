@@ -3,6 +3,7 @@ package com.pratap.clinicals.controllers;
 import java.net.URI;
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.pratap.clinicals.dtos.PatientDataRequest;
 import com.pratap.clinicals.entities.Patient;
 import com.pratap.clinicals.services.PatientService;
 
@@ -25,6 +27,8 @@ public class PatientController {
 	
 	@Autowired
 	private PatientService patientService;
+	
+	private ModelMapper modelMapper;
 	
 	@GetMapping("/patients")
 	public List<Patient> getAllPatientDetails(){
@@ -37,12 +41,16 @@ public class PatientController {
 	}
 	
 	@PostMapping("/patients")
-	public ResponseEntity<Patient> savePatient(@RequestBody Patient patient) {
+	public ResponseEntity<Patient> savePatient(@RequestBody PatientDataRequest patient) {
 		
-		Patient savedPatient = patientService.savePatient(patient);
+		modelMapper = new ModelMapper();
+		
+		Patient patientEntity = modelMapper.map(patient, Patient.class);
+		
+		Patient savedPatient = patientService.savePatient(patientEntity);
 		
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-				.buildAndExpand(patient.getId()).toUri();
+				.buildAndExpand(patientEntity.getId()).toUri();
 		return ResponseEntity.created(location).body(savedPatient);
 	}
 	
@@ -53,10 +61,12 @@ public class PatientController {
 	}
 	
 	@PatchMapping("/patients/{id}")
-	public ResponseEntity<Patient> updatePatient(@PathVariable("id") long id, @RequestBody Patient patient){
-		Patient updatedPatient = patientService.updatePatientDetails(id, patient);
+	public ResponseEntity<Patient> updatePatient(@PathVariable("id") long id, @RequestBody PatientDataRequest patient){
+		modelMapper = new ModelMapper();
+		Patient patientEntity = modelMapper.map(patient, Patient.class);
+		Patient updatedPatient = patientService.updatePatientDetails(id, patientEntity);
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/")
-				.buildAndExpand(patient.getId()).toUri();
+				.buildAndExpand(updatedPatient.getId()).toUri();
 		return ResponseEntity.created(location).body(updatedPatient);
 	}
 

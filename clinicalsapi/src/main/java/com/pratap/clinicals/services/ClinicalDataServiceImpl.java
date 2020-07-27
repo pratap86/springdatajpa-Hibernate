@@ -2,7 +2,6 @@ package com.pratap.clinicals.services;
 
 import java.time.LocalDateTime;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,30 +9,28 @@ import com.pratap.clinicals.dtos.ClinicalDataRequest;
 import com.pratap.clinicals.entities.ClinicalData;
 import com.pratap.clinicals.entities.Patient;
 import com.pratap.clinicals.repos.ClinicalDataRepository;
-import com.pratap.clinicals.repos.PatientRepository;
 
 @Service
 public class ClinicalDataServiceImpl implements ClinicalDataService {
 
 	@Autowired
 	private ClinicalDataRepository clinicalDataRepository;
-	
+
 	@Autowired
-	private PatientRepository patientRepository;
+	private PatientService patientService;
 	
-	private ModelMapper modelMapper;
+	private ClinicalData clinicalData;
 	
 	@Override
 	public ClinicalData saveClinicalData(ClinicalDataRequest request) {
 		
-		Patient fetchedPatient = patientRepository.findById(request.getPatientId()).orElse(new Patient());
+		Patient patient = patientService.getPatient(request.getPatientId());
 		
-		modelMapper = new ModelMapper();
-		
-		ClinicalData clinicalData = modelMapper.map(request, ClinicalData.class);
-		
-		clinicalData.setPatient(fetchedPatient);
+		clinicalData = new ClinicalData();
+		clinicalData.setComponentName(request.getComponentName());
+		clinicalData.setComponentValue(request.getComponentValue());
 		clinicalData.setMeasuredDateTime(LocalDateTime.now());
+		clinicalData.setPatient(patient);
 
 		return clinicalDataRepository.save(clinicalData);
 	}

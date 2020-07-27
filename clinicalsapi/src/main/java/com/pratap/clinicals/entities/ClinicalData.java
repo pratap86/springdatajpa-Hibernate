@@ -1,11 +1,11 @@
 package com.pratap.clinicals.entities;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,7 +16,9 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 
 @Entity(name = "clinicaldata")
-public class ClinicalData {
+public class ClinicalData implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +34,7 @@ public class ClinicalData {
 	private LocalDateTime measuredDateTime;
 	
 	@JsonBackReference
-	@ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
 	@JoinColumn(name = "patient_id")
 	private Patient patient;
 
@@ -75,7 +77,7 @@ public class ClinicalData {
 	@Override
 	public String toString() {
 		return "ClinicalData [id=" + id + ", componentName=" + componentName + ", componentValue=" + componentValue
-				+ ", measuredDateTime=" + measuredDateTime + ", patient=" + patient.toString() + "]";
+				+ ", measuredDateTime=" + measuredDateTime + ", patient=" + this.getPatient() + "]";
 	}
 
 }

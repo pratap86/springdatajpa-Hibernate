@@ -1,12 +1,11 @@
 package com.pratap.clinicals.entities;
 
-import java.util.HashSet;
+import java.io.Serializable;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,9 +15,10 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 @Entity(name = "patient")
-public class Patient {
+public class Patient implements Serializable {
 
-	
+	private static final long serialVersionUID = 7248845216031486492L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
@@ -32,7 +32,7 @@ public class Patient {
 	private int age;
 	
 	@JsonManagedReference
-	@OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER, mappedBy = "patient")
+	@OneToMany(cascade = {CascadeType.PERSIST}, mappedBy = "patient")
 	private Set<ClinicalData> clinicaldatas;
 
 	public String getLastName() {
@@ -68,11 +68,8 @@ public class Patient {
 	}
 
 	public void addClinicaldata(ClinicalData clinicaldata) {
-		if(clinicaldatas == null) {
-			clinicaldatas = new HashSet<>();
-		}
-		this.clinicaldatas.add(clinicaldata);
 		clinicaldata.setPatient(this);
+		this.getClinicaldatas().add(clinicaldata);
 		
 	}
 
@@ -86,7 +83,7 @@ public class Patient {
 	@Override
 	public String toString() {
 		return "Patient [id=" + id + ", lastName=" + lastName + ", firstName=" + firstName + ", age=" + age
-				+ ", clinicaldatas=" + clinicaldatas.toString() + "]";
+				+ ", clinicaldatas=" + this.getClinicaldatas().size() + "]";
 	}
 
 	
