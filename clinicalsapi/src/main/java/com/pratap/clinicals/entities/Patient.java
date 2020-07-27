@@ -82,9 +82,10 @@ public class Patient implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Patient [id=" + id + ", lastName=" + lastName + ", firstName=" + firstName + ", age=" + age
-				+ ", clinicaldatas=" + this.getClinicaldatas().size() + "]";
+		return String.format("Patient [lastName=%s, firstName=%s, age=%s, clinicaldatas=%s]", lastName, firstName, age,
+				this.getClinicaldatas().size());
 	}
 
 	
+
 }

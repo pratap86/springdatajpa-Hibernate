@@ -109,9 +109,15 @@ public class PatientServiceImpl implements PatientService {
 		LOGGER.info("inside PATCH updatePatientDetails( ), id : {} ", id);
 		LOGGER.info("and patient details {} ", patient);
 		Patient fetchedPatient = patientRepository.findById(id).orElseThrow( () -> new ClinicalServiceException("Patient Id '"+id+"' does not exist") );
-		fetchedPatient.setFirstName(patient.getFirstName());
-		fetchedPatient.setLastName(patient.getLastName());
-		fetchedPatient.setAge(patient.getAge());
+		if(patient.getFirstName() != null) {
+			fetchedPatient.setFirstName(patient.getFirstName());
+		}
+		if(patient.getLastName() != null) {
+			fetchedPatient.setLastName(patient.getLastName());
+		}
+		if(patient.getAge() != 0) {
+			fetchedPatient.setAge(patient.getAge());
+		}
 		return patientRepository.save(fetchedPatient);
 	}
 
