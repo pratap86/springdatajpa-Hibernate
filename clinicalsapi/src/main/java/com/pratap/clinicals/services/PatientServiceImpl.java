@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,16 +21,24 @@ import com.pratap.clinicals.repos.PatientRepository;
 @Service
 public class PatientServiceImpl implements PatientService {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(PatientServiceImpl.class);
 	
 	@Autowired
 	private PatientRepository patientRepository;
 	
 	@Autowired
 	private ClinicalDataRepository clinicalDataRepository;
+	
 
 	@Override
 	public List<Patient> getPatients() {
-		return patientRepository.findAll();
+		LOGGER.info("inside getPatients(), and executing patientRepository.findAll()");
+		List<Patient> patients = patientRepository.findAll();
+		LOGGER.info("Fetched patient detail", patients);
+		if (patients.isEmpty()) {
+			throw new ClinicalServiceException("No Patient data currently availble");
+		}
+		return patients;
 	}
 
 	@Override
@@ -38,6 +48,11 @@ public class PatientServiceImpl implements PatientService {
 
 	@Override
 	public Patient savePatient(Patient patient) {
+		
+		if(patient == null || patient.getClinicaldatas() == null) {
+			throw new ClinicalServiceException("Patient request data is not valid : Patient - "+patient);
+		}
+		
 		return patientRepository.save(patient);
 	}
 
@@ -82,6 +97,18 @@ public class PatientServiceImpl implements PatientService {
 		}
 		
 		return patient;
+	}
+
+	@Override
+	public Patient updatePatientDetails(long id, Patient patient) {
+		LOGGER.info("inside PATCH updatePatientDetails( ), id : {} ", id);
+		Patient fetchedPatient = patientRepository.findById(id).orElseThrow(() -> new ClinicalServiceException(" No Patient details available for ID : "+id));
+		if(patient != null) {
+			patient.getClinicaldatas().forEach(clinicalData -> {
+				fetchedPatient.addClinicaldata(clinicalData);
+			});
+		}
+		return patientRepository.saveAndFlush(fetchedPatient);
 	}
 
 }

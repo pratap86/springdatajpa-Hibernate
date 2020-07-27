@@ -13,4 +13,6 @@ public interface PatientService {
 	Patient savePatient(Patient patient);
 
 	Patient analyzePatientData(long id);
+
+	Patient updatePatientDetails(long id, Patient patient);
 }

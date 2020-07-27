@@ -12,14 +12,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 @Entity(name = "patient")
-@JsonIdentityInfo(
-		  generator = ObjectIdGenerators.PropertyGenerator.class, 
-		  property = "id")
 public class Patient {
 
 	
@@ -35,7 +31,8 @@ public class Patient {
 
 	private int age;
 	
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "patient")
+	@JsonManagedReference
+	@OneToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER, mappedBy = "patient")
 	private Set<ClinicalData> clinicaldatas;
 
 	public String getLastName() {
@@ -71,19 +68,26 @@ public class Patient {
 	}
 
 	public void addClinicaldata(ClinicalData clinicaldata) {
-		if( clinicaldata != null ) {
-			if( clinicaldatas == null ) {
-				clinicaldatas = new HashSet<>();
-			}
-			this.clinicaldatas.add(clinicaldata);
+		if(clinicaldatas == null) {
+			clinicaldatas = new HashSet<>();
 		}
+		this.clinicaldatas.add(clinicaldata);
+		clinicaldata.setPatient(this);
+		
 	}
-	
+
 	public void removeClinicaldata(ClinicalData clinicaldata) {
 		if( clinicaldata != null ) {
 			
 			this.clinicaldatas.remove(clinicaldata);
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "Patient [id=" + id + ", lastName=" + lastName + ", firstName=" + firstName + ", age=" + age
+				+ ", clinicaldatas=" + clinicaldatas.toString() + "]";
+	}
+
 	
 }

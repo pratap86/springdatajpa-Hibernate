@@ -2,6 +2,7 @@ package com.pratap.clinicals.entities;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,15 +12,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 
 @Entity(name = "clinicaldata")
-@JsonIdentityInfo(
-		  generator = ObjectIdGenerators.PropertyGenerator.class, 
-		  property = "id")
 public class ClinicalData {
 
 	@Id
@@ -35,8 +31,8 @@ public class ClinicalData {
 	@Column(name = "measured_date_time")
 	private LocalDateTime measuredDateTime;
 	
-	@JsonManagedReference
-	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonBackReference
+	@ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
 	@JoinColumn(name = "patient_id")
 	private Patient patient;
 
@@ -75,5 +71,11 @@ public class ClinicalData {
 	public void setPatient(Patient patient) {
 		this.patient = patient;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "ClinicalData [id=" + id + ", componentName=" + componentName + ", componentValue=" + componentValue
+				+ ", measuredDateTime=" + measuredDateTime + ", patient=" + patient.toString() + "]";
+	}
+
 }
