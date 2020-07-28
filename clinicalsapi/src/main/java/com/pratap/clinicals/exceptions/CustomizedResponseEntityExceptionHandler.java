@@ -38,7 +38,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 		
 		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), INCORRECT_REQUEST,
 				errorDetails);
-		return new ResponseEntity<Object>(exceptionResponse, HttpStatus.NOT_FOUND);
+		return new ResponseEntity<Object>(exceptionResponse, HttpStatus.BAD_REQUEST);
 	}
 	
 	@Override
