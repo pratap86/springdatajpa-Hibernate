@@ -4,6 +4,7 @@ import java.net.URI;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -57,6 +58,7 @@ public class ClinicalDataController {
 		return ResponseEntity.created(location).body(savedClinicalData);
 	}
 	
+	@CacheEvict("clinicalsapi-cache")
 	@ApiOperation(value = "delete a specific clinical data associated with Patient", 
 			notes = "delete only clinical record, not their Patient associated with", 
 			response = ClinicalData.class,

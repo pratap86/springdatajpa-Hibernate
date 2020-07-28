@@ -6,8 +6,10 @@ import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -35,6 +37,8 @@ public class PatientController {
 	
 	private ModelMapper modelMapper;
 	
+	@Transactional(readOnly = true)
+	@Cacheable(value = "clinicalsapi-cache")
 	@ApiOperation(value = "Retrieves all the patients with their clinical data", 
 			notes = "A list of Patients", 
 			response = Patient.class,
@@ -46,6 +50,8 @@ public class PatientController {
 	}
 	
 	
+	@Transactional(readOnly = true)
+	@Cacheable(value = "clinicalsapi-cache")
 	@ApiOperation(value = "Retrieves the specific patient detail with their clinical data", 
 			notes = "A record of Patient", 
 			response = Patient.class,
@@ -101,6 +107,8 @@ public class PatientController {
 	 * endpoint :http://localhost:8080/clinicalservices/api/patients/{id}/clinicaldatas/
 	 */
 	
+	@Transactional(readOnly = true)
+	@Cacheable(value = "clinicalsapi-cache")
 	@ApiOperation(value = "Retrieves all the clinical data associated with specific patient", 
 			notes = "A list of Patients", 
 			response = ClinicalData.class,
@@ -119,6 +127,8 @@ public class PatientController {
 	 * endpoint :http://localhost:8080/clinicalservices/api/patients/{id}/clinicaldatas?id={id}
 	 */
 	
+	@Transactional(readOnly = true)
+	@Cacheable(value = "clinicalsapi-cache")
 	@ApiOperation(value = "Retrieves the specific clinical data associated with specific patient", 
 			notes = "A list of Patients", 
 			response = ClinicalData.class,
