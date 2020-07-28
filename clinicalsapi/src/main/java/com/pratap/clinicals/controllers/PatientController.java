@@ -6,8 +6,10 @@ import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,6 +25,8 @@ import com.pratap.clinicals.entities.ClinicalData;
 import com.pratap.clinicals.entities.Patient;
 import com.pratap.clinicals.services.PatientService;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping("/api")
 @CrossOrigin
@@ -33,16 +37,36 @@ public class PatientController {
 	
 	private ModelMapper modelMapper;
 	
+	@Transactional(readOnly = true)
+	@Cacheable(value = "clinicalsapi-cache")
+	@ApiOperation(value = "Retrieves all the patients with their clinical data", 
+			notes = "A list of Patients", 
+			response = Patient.class,
+			responseContainer = "List", 
+			produces = "application/json")
 	@GetMapping("/patients")
 	public List<Patient> getAllPatientDetails(){
 		return patientService.getPatients();
 	}
 	
+	
+	@Transactional(readOnly = true)
+	@Cacheable(value = "clinicalsapi-cache")
+	@ApiOperation(value = "Retrieves the specific patient detail with their clinical data", 
+			notes = "A record of Patient", 
+			response = Patient.class,
+			responseContainer = "Object", 
+			produces = "application/json")
 	@GetMapping("/patients/{id}")
 	public Patient getPatientById( @PathVariable("id") long id ) {
 		return patientService.getPatient(id);
 	}
 	
+	@ApiOperation(value = "create a new entry of Patient in to DB", 
+			notes = "A new patient", 
+			response = Patient.class,
+			responseContainer = "Object", 
+			produces = "application/json")
 	@PostMapping("/patients")
 	public ResponseEntity<Patient> savePatient(@RequestBody PatientDataRequest patient) {
 		
@@ -63,6 +87,11 @@ public class PatientController {
 		return patientService.analyzePatientData(id);
 	}
 	
+	@ApiOperation(value = "Update specific patient details, only partialy", 
+			notes = "A Patient record", 
+			response = Patient.class,
+			responseContainer = "Object", 
+			produces = "application/json")
 	@PatchMapping("/patients/{id}")
 	public ResponseEntity<Patient> updatePatient(@PathVariable("id") long id, @RequestBody PatientDataRequest patient){
 		modelMapper = new ModelMapper();
@@ -78,6 +107,13 @@ public class PatientController {
 	 * endpoint :http://localhost:8080/clinicalservices/api/patients/{id}/clinicaldatas/
 	 */
 	
+	@Transactional(readOnly = true)
+	@Cacheable(value = "clinicalsapi-cache")
+	@ApiOperation(value = "Retrieves all the clinical data associated with specific patient", 
+			notes = "A list of Patients", 
+			response = ClinicalData.class,
+			responseContainer = "Set", 
+			produces = "application/json")
 	@GetMapping("/patients/{id}/clinicaldatas")
 	public ResponseEntity<Set<ClinicalData>> getPatientClinicalDatas(@PathVariable("id") long id){
 		
@@ -91,6 +127,13 @@ public class PatientController {
 	 * endpoint :http://localhost:8080/clinicalservices/api/patients/{id}/clinicaldatas?id={id}
 	 */
 	
+	@Transactional(readOnly = true)
+	@Cacheable(value = "clinicalsapi-cache")
+	@ApiOperation(value = "Retrieves the specific clinical data associated with specific patient", 
+			notes = "A list of Patients", 
+			response = ClinicalData.class,
+			responseContainer = "Object", 
+			produces = "application/json")
 	@GetMapping("/patients/{patientId}/clinicaldatas/{clinicalId}")
 	public ResponseEntity<ClinicalData> getPatientClinicalDatas(@PathVariable("patientId") long patientId, @PathVariable("clinicalId") long clinicalDataId){
 		

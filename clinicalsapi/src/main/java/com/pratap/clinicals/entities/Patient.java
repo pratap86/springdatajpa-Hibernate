@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -32,7 +33,7 @@ public class Patient implements Serializable {
 	private int age;
 	
 	@JsonManagedReference
-	@OneToMany(cascade = {CascadeType.PERSIST}, mappedBy = "patient", orphanRemoval = false)
+	@OneToMany(cascade = {CascadeType.PERSIST}, fetch =  FetchType.EAGER, mappedBy = "patient", orphanRemoval = false)
 	private Set<ClinicalData> clinicaldatas;
 
 	public String getLastName() {
