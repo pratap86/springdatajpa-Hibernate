@@ -2,9 +2,11 @@ package com.pratap.clinicals.controllers;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.pratap.clinicals.dtos.PatientDataRequest;
+import com.pratap.clinicals.entities.ClinicalData;
 import com.pratap.clinicals.entities.Patient;
 import com.pratap.clinicals.services.PatientService;
 
@@ -69,5 +72,31 @@ public class PatientController {
 				.buildAndExpand(updatedPatient.getId()).toUri();
 		return ResponseEntity.created(location).body(updatedPatient);
 	}
-
+	
+	/**
+	 * get specific patient's clinicaldata
+	 * endpoint :http://localhost:8080/clinicalservices/api/patients/{id}/clinicaldatas/
+	 */
+	
+	@GetMapping("/patients/{id}/clinicaldatas")
+	public ResponseEntity<Set<ClinicalData>> getPatientClinicalDatas(@PathVariable("id") long id){
+		
+		Set<ClinicalData> patientClinicalDatas = patientService.getPatientClinicalDatas(id);
+		
+		return ResponseEntity.status(HttpStatus.FOUND).body(patientClinicalDatas);
+	}
+	
+	/**
+	 * get specific patient's clinicaldata by clinicaldata id or ids
+	 * endpoint :http://localhost:8080/clinicalservices/api/patients/{id}/clinicaldatas?id={id}
+	 */
+	
+	@GetMapping("/patients/{patientId}/clinicaldatas/{clinicalId}")
+	public ResponseEntity<ClinicalData> getPatientClinicalDatas(@PathVariable("patientId") long patientId, @PathVariable("clinicalId") long clinicalDataId){
+		
+		ClinicalData patientClinicalDatas = patientService.getPatientClinicalData(patientId, clinicalDataId);
+		
+		return ResponseEntity.status(HttpStatus.FOUND).body(patientClinicalDatas);
+	}
+	
 }

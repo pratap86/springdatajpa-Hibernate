@@ -11,18 +11,22 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
-@Entity(name = "clinicaldata")
+@Entity
+@Table(name = "clinicaldata")
 public class ClinicalData implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private Long id;
 	
 	@Column(name = "component_name")
 	private String componentName;
@@ -33,8 +37,12 @@ public class ClinicalData implements Serializable {
 	@Column(name = "measured_date_time")
 	private LocalDateTime measuredDateTime;
 	
+	@JsonIgnore
+	@Transient
+	private Long patientId;
+	
 	@JsonBackReference
-	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+	@ManyToOne(cascade = {CascadeType.PERSIST})
 	@JoinColumn(name = "patient_id")
 	private Patient patient;
 
@@ -62,7 +70,7 @@ public class ClinicalData implements Serializable {
 		this.measuredDateTime = measuredDateTime;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -72,6 +80,14 @@ public class ClinicalData implements Serializable {
 
 	public void setPatient(Patient patient) {
 		this.patient = patient;
+	}
+
+	public Long getPatientId() {
+		return patientId;
+	}
+
+	public void setPatientId(Long patientId) {
+		this.patientId = patientId;
 	}
 
 	@Override

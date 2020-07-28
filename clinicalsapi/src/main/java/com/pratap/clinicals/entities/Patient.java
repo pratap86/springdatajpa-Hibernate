@@ -32,7 +32,7 @@ public class Patient implements Serializable {
 	private int age;
 	
 	@JsonManagedReference
-	@OneToMany(cascade = {CascadeType.PERSIST}, mappedBy = "patient")
+	@OneToMany(cascade = {CascadeType.PERSIST}, mappedBy = "patient", orphanRemoval = false)
 	private Set<ClinicalData> clinicaldatas;
 
 	public String getLastName() {

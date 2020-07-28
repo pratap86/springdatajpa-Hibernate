@@ -2,10 +2,11 @@ package com.pratap.clinicals.services;
 
 import java.time.LocalDateTime;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.pratap.clinicals.dtos.ClinicalDataRequest;
 import com.pratap.clinicals.entities.ClinicalData;
 import com.pratap.clinicals.entities.Patient;
 import com.pratap.clinicals.repos.ClinicalDataRepository;
@@ -22,7 +23,7 @@ public class ClinicalDataServiceImpl implements ClinicalDataService {
 	private ClinicalData clinicalData;
 	
 	@Override
-	public ClinicalData saveClinicalData(ClinicalDataRequest request) {
+	public ClinicalData saveClinicalData(ClinicalData request) {
 		
 		Patient patient = patientService.getPatient(request.getPatientId());
 		
@@ -33,6 +34,13 @@ public class ClinicalDataServiceImpl implements ClinicalDataService {
 		clinicalData.setPatient(patient);
 
 		return clinicalDataRepository.save(clinicalData);
+	}
+
+	@Override
+	@Transactional
+	public void deleteClinicalData(Long id) {
+
+		clinicalDataRepository.deleteById(id);
 	}
 
 }

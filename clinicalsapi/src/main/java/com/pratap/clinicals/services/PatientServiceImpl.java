@@ -6,7 +6,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+
+import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,6 +122,46 @@ public class PatientServiceImpl implements PatientService {
 			fetchedPatient.setAge(patient.getAge());
 		}
 		return patientRepository.save(fetchedPatient);
+	}
+
+	@Override
+	public Set<ClinicalData> getPatientClinicalDatas(long id) {
+
+		Patient fetchedPatient = patientRepository.findById(id).orElseThrow( () -> new ClinicalServiceException("Patient Id '"+id+"' does not exist") );
+		
+		Set<ClinicalData> clinicaldatas = fetchedPatient.getClinicaldatas();
+		if (clinicaldatas.size() == 0) {
+			throw new ClinicalServiceException("Now ClinicalData not available, {} "+clinicaldatas.size()); 
+		}
+		
+		return clinicaldatas;
+	}
+
+	@Override
+	public ClinicalData getPatientClinicalData(long patientId, long clinicalDataId) {
+		
+		Patient fetchedPatient = patientRepository.findById(patientId).orElseThrow( () -> new ClinicalServiceException("Patient Id '"+patientId+"' does not exist") );
+		
+		Optional<ClinicalData> filteredClinicalDataOptional = fetchedPatient.getClinicaldatas().stream().filter(clinicalData -> clinicalData.getId().equals(clinicalDataId)).findFirst();
+		if (filteredClinicalDataOptional.isEmpty()) {
+			throw new ClinicalServiceException("Now ClinicalData not available for clinical Id - "+clinicalDataId); 
+		}
+		
+		return filteredClinicalDataOptional.get();
+	}
+
+	@Override
+	@Transactional
+	public void deletePatientClinicalData(long patientId, long clinicalDataId) {
+		
+		Patient fetchedPatient = patientRepository.findById(patientId).orElseThrow( () -> new ClinicalServiceException("Patient Id '"+patientId+"' does not exist") );
+		
+		Optional<ClinicalData> filteredClinicalDataOptional = fetchedPatient.getClinicaldatas().stream().filter(clinicalData -> clinicalData.getId().equals(clinicalDataId)).findFirst();
+		if (filteredClinicalDataOptional.isEmpty()) {
+			throw new ClinicalServiceException("Now ClinicalData not available for clinical Id - "+clinicalDataId); 
+		}
+		LOGGER.info("going to delete >>>>>>>>");
+		clinicalDataRepository.delete(filteredClinicalDataOptional.get());
 	}
 
 }
