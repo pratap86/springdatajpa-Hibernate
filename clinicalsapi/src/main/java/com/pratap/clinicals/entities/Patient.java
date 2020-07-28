@@ -1,28 +1,24 @@
 package com.pratap.clinicals.entities;
 
-import java.util.HashSet;
+import java.io.Serializable;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 @Entity(name = "patient")
-@JsonIdentityInfo(
-		  generator = ObjectIdGenerators.PropertyGenerator.class, 
-		  property = "id")
-public class Patient {
+public class Patient implements Serializable {
 
-	
+	private static final long serialVersionUID = 7248845216031486492L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
@@ -35,7 +31,8 @@ public class Patient {
 
 	private int age;
 	
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "patient")
+	@JsonManagedReference
+	@OneToMany(cascade = {CascadeType.PERSIST}, mappedBy = "patient", orphanRemoval = false)
 	private Set<ClinicalData> clinicaldatas;
 
 	public String getLastName() {
@@ -71,19 +68,24 @@ public class Patient {
 	}
 
 	public void addClinicaldata(ClinicalData clinicaldata) {
-		if( clinicaldata != null ) {
-			if( clinicaldatas == null ) {
-				clinicaldatas = new HashSet<>();
-			}
-			this.clinicaldatas.add(clinicaldata);
-		}
+		clinicaldata.setPatient(this);
+		this.getClinicaldatas().add(clinicaldata);
+		
 	}
-	
+
 	public void removeClinicaldata(ClinicalData clinicaldata) {
 		if( clinicaldata != null ) {
 			
 			this.clinicaldatas.remove(clinicaldata);
 		}
 	}
+
+	@Override
+	public String toString() {
+		return String.format("Patient [lastName=%s, firstName=%s, age=%s, clinicaldatas=%s]", lastName, firstName, age,
+				this.getClinicaldatas().size());
+	}
+
 	
+
 }
