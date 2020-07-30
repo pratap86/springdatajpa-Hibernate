@@ -1,12 +1,16 @@
 package com.pratap.clinicals.controllers;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -127,6 +132,7 @@ public class PatientController {
 	 * endpoint :http://localhost:8080/clinicalservices/api/patients/{id}/clinicaldatas?id={id}
 	 */
 	
+	@ResponseStatus(code = HttpStatus.FOUND)
 	@Transactional(readOnly = true)
 	@Cacheable(value = "clinicalsapi-cache")
 	@ApiOperation(value = "Retrieves the specific clinical data associated with specific patient", 
@@ -135,11 +141,18 @@ public class PatientController {
 			responseContainer = "Object", 
 			produces = "application/json")
 	@GetMapping("/patients/{patientId}/clinicaldatas/{clinicalId}")
-	public ResponseEntity<ClinicalData> getPatientClinicalDatas(@PathVariable("patientId") long patientId, @PathVariable("clinicalId") long clinicalDataId){
+	public EntityModel<ClinicalData> getPatientClinicalData( @PathVariable("patientId") long patientId, @PathVariable("clinicalId") long clinicalDataId){
 		
-		ClinicalData patientClinicalDatas = patientService.getPatientClinicalData(patientId, clinicalDataId);
+		ClinicalData returnValue = patientService.getPatientClinicalData(patientId, clinicalDataId);
 		
-		return ResponseEntity.status(HttpStatus.FOUND).body(patientClinicalDatas);
+		//http://localhost:8080/clinicalservices/api/patients/8
+		Link patientLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientController.class).getPatientById(patientId)).withRel("patient");
+		
+		Link clinicalDatasLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientController.class).getPatientClinicalDatas(patientId)).withRel("clinicalDatas");
+		
+		Link selfLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PatientController.class).getPatientClinicalData(patientId, clinicalDataId)).withSelfRel();
+		
+		return EntityModel.of(returnValue, Arrays.asList(selfLink, patientLink, clinicalDatasLink));
 	}
 	
 }

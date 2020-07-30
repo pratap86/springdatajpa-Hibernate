@@ -12,11 +12,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 @Entity(name = "patient")
-public class Patient implements Serializable {
+public class Patient extends RepresentationModel<Patient> implements Serializable {
 
 	private static final long serialVersionUID = 7248845216031486492L;
 

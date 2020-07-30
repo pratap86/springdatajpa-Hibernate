@@ -14,13 +14,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
 @Table(name = "clinicaldata")
-public class ClinicalData implements Serializable {
+public class ClinicalData extends RepresentationModel<ClinicalData> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
